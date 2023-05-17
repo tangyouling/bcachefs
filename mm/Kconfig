@@ -1263,6 +1263,9 @@ config IOMMU_MM_DATA
 config EXECMEM
 	bool
 
+config JITALLOC
+	bool
+
 source "mm/damon/Kconfig"
 
 endmenu
