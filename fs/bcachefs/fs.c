@@ -278,6 +278,12 @@ static struct inode *bch2_alloc_inode(struct super_block *sb)
 	BUG();
 }
 
+static int ptrcmp_fn(const struct lockdep_map *l,
+		     const struct lockdep_map *r)
+{
+	return cmp_int(l, r);
+}
+
 static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
 {
 	struct bch_inode_info *inode = alloc_inode_sb(c->vfs_sb,
@@ -288,6 +294,7 @@ static struct bch_inode_info *__bch2_new_inode(struct bch_fs *c)
 	inode_init_once(&inode->v);
 	mutex_init(&inode->ei_update_lock);
 	two_state_lock_init(&inode->ei_pagecache_lock);
+	lock_set_cmp_fn(&inode->ei_pagecache_lock, ptrcmp_fn, NULL);
 	INIT_LIST_HEAD(&inode->ei_vfs_inode_list);
 	inode->ei_flags = 0;
 	mutex_init(&inode->ei_quota_lock);
